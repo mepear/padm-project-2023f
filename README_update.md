@@ -1,3 +1,5 @@
+(place sugar box on the countertop)
+
 # Final Project
 
 ## Activity Planning
@@ -33,7 +35,11 @@ We provide detailed information for the kitchen environment:
 
 **sugar_on_stove**: the sugar box is on the top of the burner
 
+**sugar_in_hand**: the sugar box is in the hand
+
 **spam_on_counter**: the spam box is on the counter top
+
+**spam_in_hand**: the spam box is in the hand
 
 **sugar_on_counter**: the sugar box is on the counter top
 
@@ -49,9 +55,13 @@ We provide detailed information for the kitchen environment:
 
 **close_drawer (close the drawer)**
 
-**carry_sugar_to_counter (move the sugar box to the counter top)**
+**pick_sugar (pick up the sugar box)**
 
-**carry_spam_to_drawer (move the spam box in the drawer)**
+**place_sugar (place sugar box on the countertop)**
+
+**pick_spam (pick up the spam box)**
+
+**place_spam (move the spam box in the drawer)**
 
 *Initial condition:*
 
@@ -72,12 +82,14 @@ python -B -m activity-planning.pddl_parser.planner activity-planning/kitchen/kit
 This will output the plan information and the plan length.
 
 ```
-Length: 5
+Length: 7
 plan:
-move
-open_drawer
-carry_sugar_to_counter
-carry_spam_to_drawer
+move 
+open_drawer 
+pick_sugar 
+place_sugar 
+pick_spam 
+place_spam 
 close_drawer
 ```
 
@@ -108,6 +120,6 @@ class A_star_planner:
 
 Main function for both planner is `solve()` function and it will generate the final plan for the problem. There are three same function `calculate_heuristic(), applicable(), apply()` for both planner. `calculate_heuristic()` calculates the Fast Forward heuristic for a single state. It calculate the distance of the original state with final goal on relaxed planning graph. `applicable(), apply()` are functions in [pddl-parser](https://github.com/pucrs-automated-planning/pddl-parser) planner, which calculate whether it's able to apply an action on a single state and the result state after applying an action.
 
-`A_star_planner()` generates plan with best first search order. It will always pop a the node with minimal $h(n)+g(n)$ and generat all its child nodes. 
+`A_star_planner()` generates plan with best first search order. It will always pop a the node with minimal $h(n)+g(n)$ and generat all its child nodes.
 
 The `Fast_Forward_planner()`  generates plan according to Enforced Hill-Climbing Algorithm. Whenever it finds a child node with less heuristic value, it goes to this node and neglect all other nodes. If there doesn't exist such node, it will use `BFS()` function to search such nodes in a BFS way. If it returns no solution, it will call `A_star_planner()` as a backup.
