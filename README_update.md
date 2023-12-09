@@ -8,15 +8,15 @@ In this part, we implement Fast Forward planner in the kitchen environment provi
 
 ### Source
 
-The main folder for the project is `./activity-planning`
+The main folder for the project is `./activity_planning`
 
-`./activity-planning/pddl_parser` contains all algorithm for activity planning. Below is files under the folder
+`./activity_planning/pddl_parser` contains all algorithm for activity planning. Below is files under the folder
 
 - action.py (same as in [pddl-parser](https://github.com/pucrs-automated-planning/pddl-parser))
 - PDDL.py (same as in [pddl-parser](https://github.com/pucrs-automated-planning/pddl-parser))
 - planner.py (the Fast Forward planner we implement with A star as a backup planner)
 
-`./activity-planning/kitchen` contains the kitchen environment in PDDL form and the given task in PDDL form
+`./activity_planning/kitchen` contains the kitchen environment in PDDL form and the given task in PDDL form
 
 * kitchen.pddl (predicates and actions)
 * pb.pddl (initial state and final task)
@@ -76,7 +76,7 @@ We provide detailed information for the kitchen environment:
 You can simply run the algorithm on the kitchen environment as following
 
 ```
-python -B -m activity-planning.pddl_parser.planner activity-planning/kitchen/kitchen.pddl activity-planning/kitchen/pb.pddl
+python -B -m activity_planning.pddl_parser.planner activity_planning/kitchen/kitchen.pddl activity_planning/kitchen/pb.pddl
 ```
 
 This will output the plan information and the plan length.
