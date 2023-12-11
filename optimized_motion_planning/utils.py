@@ -26,12 +26,19 @@ def trajectory_optimization(rrt_paths):
 
     prog.AddCost(np.sum(np.subtract(trajectory[:, 1:], trajectory[:, :-1]) ** 2))
 
-    prog.AddConstraint(eq(trajectory[:, 0], rrt_paths[0]))
-    prog.AddConstraint(eq(trajectory[:, -1], rrt_paths[-1]))
+    prog.AddConstraint(eq(trajectory[:, 0], np.array(rrt_paths[0])))
+    prog.AddConstraint(eq(trajectory[:, -1], np.array(rrt_paths[-1])))
     for i in range(1, length-1):
-        prog.AddConstraint(le(np.subtract(trajectory[:, i], rrt_paths[i]), 0.4 * np.ones(7)))
-        prog.AddConstraint(ge(np.subtract(trajectory[:, i], rrt_paths[i]), -0.4 * np.ones(7)))
+        prog.AddConstraint(le(np.subtract(trajectory[:, i], np.array(rrt_paths[i])), 2.0 * np.ones(7)))
+        prog.AddConstraint(ge(np.subtract(trajectory[:, i], np.array(rrt_paths[i])), -2.0 * np.ones(7)))
+    # for i in range(length-1):
+    #     prog.AddConstraint(le(np.subtract(trajectory[:, i+1], trajectory[:, i]), 0.3 * np.ones(7)))
+    #     prog.AddConstraint(ge(np.subtract(trajectory[:, i+1], trajectory[:, i]), -0.3 * np.ones(7)))
+    for i in range(1, length-1):
+        prog.AddConstraint(le(np.subtract(2 * trajectory[:, i], trajectory[:, i+1] + trajectory[:, i-1]), 0.1 * np.ones(7)))
+        prog.AddConstraint(ge(np.subtract(2 * trajectory[:, i], trajectory[:, i+1] + trajectory[:, i-1]), -0.1 * np.ones(7)))
 
     result = Solve(prog)
     trajectory_sol = result.GetSolution(trajectory)
+    # print(trajectory_sol)
     return trajectory_sol
