@@ -22,6 +22,7 @@ from src.utils import JOINT_TEMPLATE, BLOCK_SIZES, BLOCK_COLORS, COUNTERS, \
     STOVES, TOP_GRASP, randomize, LEFT_DOOR, point_from_pose, translate_linearly
 
 from rrt import *
+from utils import trajectory_optimization
 
 UNIT_POSE2D = (0., 0., 0.)
 
@@ -95,10 +96,14 @@ class Motion_Planner():
     
     def goto(self, goal):
         start = get_joint_positions(self.world.robot, self.world.arm_joints)
-        paths = rrt(self.world, start, goal)
-        for path in paths:
-            # print(path.joint_pos)
-            set_joint_positions(self.world.robot, self.ik_joints, path.joint_pos)
+        # paths = rrt(self.world, start, goal)
+        paths = trajectory_optimization(start, goal)
+        # for path in paths:
+        #     # print(path.joint_pos)
+        #     set_joint_positions(self.world.robot, self.ik_joints, path.joint_pos)
+        #     wait_for_duration(PAUSE)
+        for i in range(10):
+            set_joint_positions(self.world.robot, self.ik_joints, paths[:, i+1])
             wait_for_duration(PAUSE)
     
     def goto_holding(self, goal, body):
