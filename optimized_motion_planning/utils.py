@@ -16,27 +16,22 @@ from pydrake.all import (Binding, Box, DiagramBuilder, DirectCollocation,
                          RotationMatrix, SceneGraph, Simulator, Solve, Sphere,
                          StartMeshcat, TrajectorySource, Variable, eq, le, ge)
 
-def trajectory_optimization(start, goal):
-    num = 11
-    start = np.array(start)
-    goal = np.array(goal)
+def trajectory_optimization(rrt_paths):
+    length = len(rrt_paths)
     
-    # create decision variables
-    x = np.empty((7, num), dtype=Variable)
+    trajectory = np.empty((7, length), dtype=Variable)
     prog = MathematicalProgram()
-    for n in range(num):
-        x[:, n] = prog.NewContinuousVariables(7, 'x' + str(n))
+    for i in range(length):
+        trajectory[:, i] = prog.NewContinuousVariables(7, 'variable_{}'.format(i))
 
-    # add cost
-    prog.AddCost(np.sum(np.subtract(x[:, 1:], x[:, :-1]) ** 2))
+    prog.AddCost(np.sum(np.subtract(trajectory[:, 1:], trajectory[:, :-1]) ** 2))
 
-    # add contraints
-    prog.AddConstraint(eq(x[:, 0], start))
-    prog.AddConstraint(eq(x[:, -1], goal))
-    for n in range(num-1):
-        prog.AddConstraint(le(np.subtract(x[:, n+1], x[:, n]), 0.3 * np.ones(7)))
-        prog.AddConstraint(ge(np.subtract(x[:, n+1], x[:, n]), -0.3 * np.ones(7)))
+    prog.AddConstraint(eq(trajectory[:, 0], rrt_paths[0]))
+    prog.AddConstraint(eq(trajectory[:, -1], rrt_paths[-1]))
+    for i in range(1, length-1):
+        prog.AddConstraint(le(np.subtract(trajectory[:, i], rrt_paths[i]), 0.4 * np.ones(7)))
+        prog.AddConstraint(ge(np.subtract(trajectory[:, i], rrt_paths[i]), -0.4 * np.ones(7)))
 
     result = Solve(prog)
-    x_sol = result.GetSolution(x)
-    return x_sol
+    trajectory_sol = result.GetSolution(trajectory)
+    return trajectory_sol

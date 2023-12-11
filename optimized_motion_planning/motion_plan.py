@@ -96,13 +96,18 @@ class Motion_Planner():
     
     def goto(self, goal):
         start = get_joint_positions(self.world.robot, self.world.arm_joints)
-        # paths = rrt(self.world, start, goal)
-        paths = trajectory_optimization(start, goal)
+        print("Start RRT")
+        paths = rrt(self.world, start, goal)
+        print("End RRT")
+        rrt_paths = [np.array(start)]
+        for path in paths:
+            rrt_paths.append(np.array(path.joint_pos))
+        paths = trajectory_optimization(rrt_paths)
         # for path in paths:
         #     # print(path.joint_pos)
         #     set_joint_positions(self.world.robot, self.ik_joints, path.joint_pos)
         #     wait_for_duration(PAUSE)
-        for i in range(10):
+        for i in range(len(rrt_paths)-1):
             set_joint_positions(self.world.robot, self.ik_joints, paths[:, i+1])
             wait_for_duration(PAUSE)
     
@@ -190,8 +195,8 @@ class Motion_Planner():
             else: #  close_drawer
                 self.world.open_gripper()
 
-                goal = next(closest_inverse_kinematics(self.world.robot, PANDA_INFO, self.tool_link, ((0.71, 1.18, -0.66), quat_from_euler([np.pi/2, 0, -np.pi/2])) , max_time=0.05), None)                
-                # goal = [0.6580787095710914, -1.1889422048343952, -2.260089028618082, -2.652050336542238, 1.4192028906945806, 2.4682067756941386, 2.120482686209028]
+                # goal = next(closest_inverse_kinematics(self.world.robot, PANDA_INFO, self.tool_link, ((0.71, 1.18, -0.66), quat_from_euler([np.pi/2, 0, -np.pi/2])) , max_time=0.05), None)                
+                goal = [0.6580787095710914, -1.1889422048343952, -2.260089028618082, -2.652050336542238, 1.4192028906945806, 2.4682067756941386, 2.120482686209028]
                 print(goal)
                 self.goto(goal)
                 self.world.close_gripper()
@@ -200,7 +205,7 @@ class Motion_Planner():
                 joint = joint_from_name(self.world.kitchen, "indigo_drawer_top_joint")
                 set_joint_position(self.world.kitchen, joint, self.world.closed_conf(joint))
                 set_pose(self.world.get_body("potted_meat_can1"), pose2d_on_surface(self.world, 'potted_meat_can1', 'indigo_drawer_top', pose2d=(0.15, 1.18, np.pi / 4)))
-                goal = next(closest_inverse_kinematics(self.world.robot, PANDA_INFO, self.tool_link, ((0.48, 1.18, -0.65), quat_from_euler([np.pi/2, 0, -np.pi/2])) , max_time=0.05), None)
-                # goal = [1.2007270551841662, -1.7595855553491675, -1.9737683465927982, -2.0879884498410597, 1.9714643899941438, 2.806091659849849, 1.6111691487577595]
+                # goal = next(closest_inverse_kinematics(self.world.robot, PANDA_INFO, self.tool_link, ((0.48, 1.18, -0.65), quat_from_euler([np.pi/2, 0, -np.pi/2])) , max_time=0.05), None)
+                goal = [1.2007270551841662, -1.7595855553491675, -1.9737683465927982, -2.0879884498410597, 1.9714643899941438, 2.806091659849849, 1.6111691487577595]
                 self.goto(goal)
                 wait_for_duration(PAUSE_LONG)
