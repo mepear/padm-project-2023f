@@ -123,3 +123,45 @@ Main function for both planner is `solve()` function and it will generate the fi
 `A_star_planner()` generates plan with best first search order. It will always pop a the node with minimal $h(n)+g(n)$ and generat all its child nodes.
 
 The `Fast_Forward_planner()`  generates plan according to Enforced Hill-Climbing Algorithm. Whenever it finds a child node with less heuristic value, it goes to this node and neglect all other nodes. If there doesn't exist such node, it will use `BFS()` function to search such nodes in a BFS way. If it returns no solution, it will call `A_star_planner()` as a backup.
+
+## Sample Based Motion Planning
+
+In this part, we implement Sample Based Motion Planning using Rapidly exploring random trees (RRT) in the kitchen environment provided. The below sections will provide the detailed information about implementation.
+
+### Assumptions and hardcoded values
+1. We assume the sugar box and the spam box will automatically attch to the gripper after the gripper is closed
+2. We assume the objects do not have collision shapes, that is, we only consider collision between robot and kitchens
+3. We assume the drawer will automatically open after the `open_drawer` action and close before the `close_drawer` action
+4. We hardcoded the gripper position and orientation for each stage, and then use `closest_inverse_kinematics()` to calculate joint values
+5. We have fixed the probability to sample goal, distance threshold to goal, and step size for RRT
+
+### Details
+The main folder for the section is `./sample_based_motion_planning`
+
+`./sample_based_motion_planning/pipeline.py` contains the pipeline that integrates activity plan with motion plan. It inputs plan from activity planning into `motion_plan()` in `./sample_based_motion_planning/motion_planning.py`
+
+`./sample_based_motion_planning/motion_planning.py` contains the motion planning algorithm implementation and helper methods. Main function is `motion_plan()`. For each action, it calculates goal joint values based on hardcoded goal pose and call `goto()` or `goto_holding()` which then call `rrt()` from `./sample_based_motion_planning/rrt.py` to plan and execute trajectories. It also calls `rotate()` and `move()` to move the base. 
+```Python
+class Motion_Planner:
+    def rotate(self, step_size, step, start_pose): # rotate base to goal orientaion
+    def move(self, step_size, step, start_pose): # move base to goal position
+    def goto(self, goal): # move arm to goal position and orientation
+    def goto_holding(self, goal, body): # move arm to goal position and orientation, while holding objects in hand
+    def motion_plan(self): # for each action, plan trajectories and execute
+```
+
+`./sample_based_motion_planning/rrt.py` contains the RRT algorithm implementation. Main function is `rrt()`. It randomly sample new node and add sampled safe nodes to the tree until reach the goal. `check_collision()`, `nearest_node()`, `add_new_node()` are helper methods. 
+```Python
+class TreeNode: 
+
+def check_collision(start, new_node_pos, world): # check collision
+def nearest_node(new_point, nodes): # calculate nearest node
+def add_new_node(node_start, node_end): # steer
+def rrt(world, start, goal): # rrt algorithm
+```
+
+### Integration of activity plan with the motion plan
+As explained in previous part, `./sample_based_motion_planning/pipeline.py` contains the pipeline that integrates activity plan with motion plan. It inputs plan from activity planning into `motion_plan()` in `./sample_based_motion_planning/motion_planning.py`, which then call `rrt()` to plan trajectories and execute for each action.
+
+### Video of robot executing the plan
+Here is the link for the video of [robot executing the plan](https://drive.google.com/file/d/1YNlHLJpRRWxm-o4ysbdovcYNgG88XskH/view?usp=sharing)
