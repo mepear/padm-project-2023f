@@ -129,7 +129,6 @@ class Motion_Planner():
                 goal = next(closest_inverse_kinematics(self.world.robot, PANDA_INFO, self.tool_link, ((0.43, 1.18, -0.65), quat_from_euler([np.pi/2, 0, -np.pi/2])) , max_time=0.05), None)
                 # goal = [1.2007270551841662, -1.7595855553491675, -1.9737683465927982, -2.0879884498410597, 1.9714643899941438, 2.806091659849849, 1.6111691487577595]
                 paths = self.goto(goal)
-                np.save('1.npy', paths)
                 wait_for_duration(PAUSE_LONG)
                 self.world.close_gripper()
 
@@ -137,7 +136,6 @@ class Motion_Planner():
                 # goal = [0.6580787095710914, -1.1889422048343952, -2.260089028618082, -2.652050336542238, 1.4192028906945806, 2.4682067756941386, 2.120482686209028]
                 print(goal)
                 paths = self.goto(goal)
-                np.save('2.npy', paths)
                 joint = joint_from_name(self.world.kitchen, "indigo_drawer_top_joint")
                 set_joint_position(self.world.kitchen, joint, self.world.open_conf(joint))
                 self.world.open_gripper()
@@ -148,7 +146,6 @@ class Motion_Planner():
                 goal = [1.0702424300399622, 1.373856070414984, -1.1390516185175135, -0.8669791311702362, -0.5365096511713681, 2.0585505229033503, 2.5686024293470178]
                 # print(get_link_pose(self.world.robot, self.tool_link))
                 paths = self.goto(goal)
-                np.save('3.npy', paths)
                 wait_for_duration(PAUSE_LONG)
                 self.world.close_gripper()
 
@@ -161,7 +158,6 @@ class Motion_Planner():
                 # print(goal)
                 goal = [-0.5528515863785192, 0.6389534857100402, 0.606463328583921, -1.4967316645183573, -2.2767144208631773, 2.1555640462606442, 2.896974117812183]
                 paths = self.goto_holding(goal, self.world.get_body("sugar_box0"))
-                np.save('4.npy', paths)
                 wait_for_duration(PAUSE_LONG)
                 set_pose(self.world.get_body("sugar_box0"), pose2d_on_surface(self.world, 'sugar_box0', COUNTERS[0], pose2d=(0.1, 1., -np.pi / 4)))
                 self.world.open_gripper()
@@ -171,7 +167,6 @@ class Motion_Planner():
                 # goal = next(closest_inverse_kinematics(self.world.robot, PANDA_INFO, self.tool_link, ((0.32, 1.08, -0.525), quat_from_euler([0, -np.pi/2, np.pi/4])), max_time=0.5), None)
                 goal = [1.3743772295259742, -1.7459460909418227, -1.8214852297816628, -2.275877766270062, -0.01017444611038787, 2.8873626152875405, -1.0802956959019316]
                 paths = self.goto(goal)
-                np.save('5.npy', paths)
                 wait_for_duration(PAUSE_LONG)
                 self.world.close_gripper()
 
@@ -185,7 +180,6 @@ class Motion_Planner():
                 print(goal)
                 # goal = (-0.10029298683257405, 0.8075911195804472, 0.06859836909844828, -1.4332957958078696, 0.019711396650709645, 3.024185878659845, 0.6934382572596789)
                 paths = self.goto_holding(goal, self.world.get_body("potted_meat_can1"))
-                np.save('6.npy', paths)
                 wait_for_duration(PAUSE_LONG)
                 set_pose(self.world.get_body("potted_meat_can1"), pose2d_on_surface(self.world, 'potted_meat_can1', 'indigo_drawer_top', pose2d=(0.5, 1.18, np.pi / 4)))
                 self.world.open_gripper()
@@ -197,7 +191,6 @@ class Motion_Planner():
                 # goal = [0.6580787095710914, -1.1889422048343952, -2.260089028618082, -2.652050336542238, 1.4192028906945806, 2.4682067756941386, 2.120482686209028]
                 print(goal)
                 paths = self.goto(goal)
-                np.save('7.npy', paths)
                 self.world.close_gripper()
                 wait_for_duration(PAUSE_LONG)
 
@@ -207,5 +200,4 @@ class Motion_Planner():
                 goal = next(closest_inverse_kinematics(self.world.robot, PANDA_INFO, self.tool_link, ((0.48, 1.18, -0.65), quat_from_euler([np.pi/2, 0, -np.pi/2])) , max_time=0.05), None)
                 # goal = [1.2007270551841662, -1.7595855553491675, -1.9737683465927982, -2.0879884498410597, 1.9714643899941438, 2.806091659849849, 1.6111691487577595]
                 paths = self.goto(goal)
-                np.save('8.npy', paths)
                 wait_for_duration(PAUSE_LONG)

@@ -146,7 +146,7 @@ class Motion_Planner():
                 self.world.open_gripper()
                 # goal = next(closest_inverse_kinematics(self.world.robot, PANDA_INFO, self.tool_link, ((0.43, 1.18, -0.65), quat_from_euler([np.pi/2, 0, -np.pi/2])) , max_time=0.05), None)
                 goal = [1.2007270551841662, -1.7595855553491675, -1.9737683465927982, -2.0879884498410597, 1.9714643899941438, 2.806091659849849, 1.6111691487577595]
-                paths = np.load('1.npy')
+                paths = np.load('rrt_paths/path_1.npy')
                 self.goto(goal, paths)
                 wait_for_duration(PAUSE_LONG)
                 self.world.close_gripper()
@@ -154,7 +154,7 @@ class Motion_Planner():
                 # goal = next(closest_inverse_kinematics(self.world.robot, PANDA_INFO, self.tool_link, ((0.73, 1.18, -0.66), quat_from_euler([np.pi/2, 0, -np.pi/2])) , max_time=0.05), None)                
                 goal = [0.6580787095710914, -1.1889422048343952, -2.260089028618082, -2.652050336542238, 1.4192028906945806, 2.4682067756941386, 2.120482686209028]
                 print(goal)
-                paths = np.load('2.npy')
+                paths = np.load('rrt_paths/path_2.npy')
                 self.goto(goal, paths)
                 joint = joint_from_name(self.world.kitchen, "indigo_drawer_top_joint")
                 set_joint_position(self.world.kitchen, joint, self.world.open_conf(joint))
@@ -165,7 +165,7 @@ class Motion_Planner():
                 # goal = next(closest_inverse_kinematics(self.world.robot, PANDA_INFO, self.tool_link, ((0.14, 0.5, -0.4), quat_from_euler([0, -np.pi/2, -np.pi/4])), max_time=0.5), None)
                 goal = [1.0702424300399622, 1.373856070414984, -1.1390516185175135, -0.8669791311702362, -0.5365096511713681, 2.0585505229033503, 2.5686024293470178]
                 # print(get_link_pose(self.world.robot, self.tool_link))
-                paths = np.load('3.npy')
+                paths = np.load('rrt_paths/path_3.npy')
                 self.goto(goal, paths)
                 wait_for_duration(PAUSE_LONG)
                 self.world.close_gripper()
@@ -178,7 +178,7 @@ class Motion_Planner():
                 # goal = next(closest_inverse_kinematics(self.world.robot, PANDA_INFO, self.tool_link, ((0.1, 1., -0.3), quat_from_euler([0, -np.pi/2, -np.pi/4])), max_time=0.5), None)
                 # print(goal)
                 goal = [-0.5528515863785192, 0.6389534857100402, 0.606463328583921, -1.4967316645183573, -2.2767144208631773, 2.1555640462606442, 2.896974117812183]
-                paths = np.load('4.npy')
+                paths = np.load('rrt_paths/path_4.npy')
                 self.goto_holding(goal, self.world.get_body("sugar_box0"), paths)
                 wait_for_duration(PAUSE_LONG)
                 set_pose(self.world.get_body("sugar_box0"), pose2d_on_surface(self.world, 'sugar_box0', COUNTERS[0], pose2d=(0.1, 1., -np.pi / 4)))
@@ -188,7 +188,7 @@ class Motion_Planner():
                 self.world.open_gripper()
                 # goal = next(closest_inverse_kinematics(self.world.robot, PANDA_INFO, self.tool_link, ((0.32, 1.08, -0.525), quat_from_euler([0, -np.pi/2, np.pi/4])), max_time=0.5), None)
                 goal = [1.3743772295259742, -1.7459460909418227, -1.8214852297816628, -2.275877766270062, -0.01017444611038787, 2.8873626152875405, -1.0802956959019316]
-                paths = np.load('5.npy')
+                paths = np.load('rrt_paths/path_5.npy')
                 self.goto(goal, paths)
                 wait_for_duration(PAUSE_LONG)
                 self.world.close_gripper()
@@ -202,7 +202,7 @@ class Motion_Planner():
                 # goal = next(closest_inverse_kinematics(self.world.robot, PANDA_INFO, self.tool_link, ((0.55, 1.18, -0.3), quat_from_euler([0, -np.pi/2, np.pi/4])), max_time=0.5), None)
                 print(goal)
                 goal = [0.5593330125431981, -1.762743113374474, -1.4339734963269821, -2.666317441450773, -0.2294252375362298, 2.400037042000389, -0.4365209325444366]
-                paths = np.load('6.npy')
+                paths = np.load('rrt_paths/path_6.npy')
                 self.goto_holding(goal, self.world.get_body("potted_meat_can1"), paths)
                 wait_for_duration(PAUSE_LONG)
                 set_pose(self.world.get_body("potted_meat_can1"), pose2d_on_surface(self.world, 'potted_meat_can1', 'indigo_drawer_top', pose2d=(0.5, 1.18, np.pi / 4)))
@@ -214,7 +214,7 @@ class Motion_Planner():
                 # goal = next(closest_inverse_kinematics(self.world.robot, PANDA_INFO, self.tool_link, ((0.71, 1.18, -0.66), quat_from_euler([np.pi/2, 0, -np.pi/2])) , max_time=0.05), None)                
                 goal = [0.6580787095710914, -1.1889422048343952, -2.260089028618082, -2.652050336542238, 1.4192028906945806, 2.4682067756941386, 2.120482686209028]
                 print(goal)
-                paths = np.load('7.npy')
+                paths = np.load('rrt_paths/path_7.npy')
                 self.goto(goal, paths)
                 self.world.close_gripper()
                 wait_for_duration(PAUSE_LONG)
@@ -224,6 +224,6 @@ class Motion_Planner():
                 set_pose(self.world.get_body("potted_meat_can1"), pose2d_on_surface(self.world, 'potted_meat_can1', 'indigo_drawer_top', pose2d=(0.15, 1.18, np.pi / 4)))
                 # goal = next(closest_inverse_kinematics(self.world.robot, PANDA_INFO, self.tool_link, ((0.48, 1.18, -0.65), quat_from_euler([np.pi/2, 0, -np.pi/2])) , max_time=0.05), None)
                 goal = [1.2007270551841662, -1.7595855553491675, -1.9737683465927982, -2.0879884498410597, 1.9714643899941438, 2.806091659849849, 1.6111691487577595]
-                paths = np.load('8.npy')
+                paths = np.load('rrt_paths/path_8.npy')
                 self.goto(goal, paths)
                 wait_for_duration(PAUSE_LONG)
