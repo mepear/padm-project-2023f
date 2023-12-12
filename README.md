@@ -1,5 +1,3 @@
-(place sugar box on the countertop)
-
 # Final Project
 
 ## Activity Planning
@@ -128,19 +126,32 @@ The `Fast_Forward_planner()`  generates plan according to Enforced Hill-Climbing
 
 In this part, we implement Sample Based Motion Planning using Rapidly exploring random trees (RRT) in the kitchen environment provided. The below sections will provide the detailed information about implementation.
 
-### Assumptions and hardcoded values
+### Assumptions and Hardcoded Values
+
 1. We assume the sugar box and the spam box will automatically attch to the gripper after the gripper is closed
 2. We assume the objects do not have collision shapes, that is, we only consider collision between robot and kitchens
 3. We assume the drawer will automatically open after the `open_drawer` action and close before the `close_drawer` action
 4. We hardcoded the gripper position and orientation for each stage, and then use `closest_inverse_kinematics()` to calculate joint values
 5. We have fixed the probability to sample goal, distance threshold to goal, and step size for RRT
 
-### Details
+### Execution
+
+You can run the algorithm as following
+
+```
+bash run_sample.sh
+```
+
+Because it is sampling based, if there is no trajectory, you can run it again.
+
+### Implementation Details
+
 The main folder for the section is `./sample_based_motion_planning`
 
 `./sample_based_motion_planning/pipeline.py` contains the pipeline that integrates activity plan with motion plan. It inputs plan from activity planning into `motion_plan()` in `./sample_based_motion_planning/motion_planning.py`
 
-`./sample_based_motion_planning/motion_planning.py` contains the motion planning algorithm implementation and helper methods. Main function is `motion_plan()`. For each action, it calculates goal joint values based on hardcoded goal pose and call `goto()` or `goto_holding()` which then call `rrt()` from `./sample_based_motion_planning/rrt.py` to plan and execute trajectories. It also calls `rotate()` and `move()` to move the base. 
+`./sample_based_motion_planning/motion_planning.py` contains the motion planning algorithm implementation and helper methods. Main function is `motion_plan()`. For each action, it calculates goal joint values based on hardcoded goal pose and call `goto()` or `goto_holding()` which then call `rrt()` from `./sample_based_motion_planning/rrt.py` to plan and execute trajectories. It also calls `rotate()` and `move()` to move the base.
+
 ```Python
 class Motion_Planner:
     def rotate(self, step_size, step, start_pose): # rotate base to goal orientaion
@@ -150,7 +161,8 @@ class Motion_Planner:
     def motion_plan(self): # for each action, plan trajectories and execute
 ```
 
-`./sample_based_motion_planning/rrt.py` contains the RRT algorithm implementation. Main function is `rrt()`. It randomly sample new node and add sampled safe nodes to the tree until reach the goal. `check_collision()`, `nearest_node()`, `add_new_node()` are helper methods. 
+`./sample_based_motion_planning/rrt.py` contains the RRT algorithm implementation. Main function is `rrt()`. It randomly sample new node and add sampled safe nodes to the tree until reach the goal. `check_collision()`, `nearest_node()`, `add_new_node()` are helper methods.
+
 ```Python
 class TreeNode: 
 
@@ -160,8 +172,66 @@ def add_new_node(node_start, node_end): # steer
 def rrt(world, start, goal): # rrt algorithm
 ```
 
-### Integration of activity plan with the motion plan
+### Integration of Activity Plan with Motion Plan
+
 As explained in previous part, `./sample_based_motion_planning/pipeline.py` contains the pipeline that integrates activity plan with motion plan. It inputs plan from activity planning into `motion_plan()` in `./sample_based_motion_planning/motion_planning.py`, which then call `rrt()` to plan trajectories and execute for each action.
 
-### Video of robot executing the plan
+### Video of Robot Executing the Plan
+
 Here is the link for the video of [robot executing the plan](https://drive.google.com/file/d/1YNlHLJpRRWxm-o4ysbdovcYNgG88XskH/view?usp=sharing)
+
+## Trajectory Optimization
+
+In this part, we will use previous calculated RRT paths and pydrake to calculate optimized trajectory . The below sections will provide the detailed information about implementation.
+
+### Key Functions and Files
+
+The main folder for the section is `./optimized_motion_planning`. We also save previous RRT trajectories into `./rrt_paths`. The added file compared with `./sample_based_motion_planning` is `./optimized_motion_planning/utils.py` which contains function `trajectory_optimization(rrt_path)`. The function will take previous RRT paths and generate optimized path using pydrake solver.
+
+### Execution
+
+You can run the algorithm as following
+
+```
+bash run_optimized.sh
+```
+
+### Optimization Problem
+
+We denote the RRT trajectory as $r_1, \dots r_T$ and our trajectory variables as $x_1, \dots x_T$.
+
+The objective of our optimization problem is
+
+$$
+minimize \ \ \ \sum_{i = 2}^{T-1} \Vert 2 * x_i - x_{i-1} - x_{i+1} \Vert^2
+$$
+
+We choose this function because this function can approximate the total acceleration. We want the sum to be as small as possible.
+
+Constraints includes three parts, the first part is
+
+$$
+r_1 = x_1, r_T = x_T
+$$
+
+It means the start and goal location need to be unchanged. The second part is
+
+$$
+\Vert 2 * x_i - x_{i-1} - x_{i+1} \Vert_{\infty} \le 0.1
+$$
+
+This is similar to the objective which means the acceleration can't be too big. The final part is
+
+$$
+\Vert x_i - r_i \Vert_{\infty} \le 0.5
+$$
+
+This means our trajectory needs to be similar to the RRT treajectory so that it has less possibility containing collision.
+
+### Video of robot executing the plan
+
+Here is the link for the video of [robot executing the plan](https://drive.google.com/file/d/1UpYO_6k24JOt61ATL3n0Ry-nXIcL41R-/view?usp=share_link)
+
+### Comparation with previous plan
+
+Through video, our optimized plan has a smoother trajectory without collision. Also, it has less change in velocity of the robot arm. Although our formulation can't guarantee collision free, it works better in practical.
